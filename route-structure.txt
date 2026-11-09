@@ -1,0 +1,142 @@
+Category-Driven Sidebar Design — Routes & Structure
+Great design idea. Below is a full evaluation of the UX, then the colocation-first route structure using Next.js route groups + private folders (_) — everything for a tool lives in its own route folder.
+
+🧠 The Design Idea — Evaluation
+Flow you described:
+
+text
+Homepage (categories + tools grid)
+   │
+   ├─► Click "Developer"  ──────►  /categories/developer
+   │                                    │
+   │                                    ▼
+   │                             ┌──────────────────────┐
+   │                             │ Sidebar  │ Tool list │
+   │                             │ Developer│ JSON      │
+   │                             │  JSON    │ Base64    │
+   │                             │  Base64  │ Regex     │
+   │                             │  Regex   │           │
+   │                             └──────────────────────┘
+   │                                    │
+   │                                    ▼  Click "JSON Formatter"
+   │
+   └─────────────────────────►  /tools/json-formatter
+                                      │
+                                      ▼
+                                ┌──────────────────────┐
+                                │ Sidebar  │ Tool UI   │
+                                │ Developer│ [Tool]    │
+                                │  JSON ←  │           │
+                                │  Base64  │           │
+                                │  Regex   │           │
+                                └──────────────────────┘
+✅ Why this design works
+Strength	Why it matters
+Persistent sidebar	Users always know where they are — no dead-ends
+Category = mental model	Matches how people think ("I need a converter")
+Fast discovery	Click category → see all siblings without going home
+Keyboard-friendly	Sidebar is a natural tab order for power users
+Bookmarkable tools	Direct URL to any tool still works
+⚠️ Watch out for
+Category must be derived on tool pages — otherwise the sidebar can't highlight the active category. Solution: the tool registry is the source of truth — every tool knows its category, so the sidebar looks it up.
+
+Don't duplicate the sidebar in every layout — put it in a shared group layout so it persists across category → tool navigation.
+
+Mobile: sidebar becomes a slide-over drawer (Sheet) — don't show it inline below md.
+
+🗺️ Recommended Route Structure
+This is the best structure for your constraints — colocation + private folders + persistent sidebar.
+
+text
+src/app/
+│
+├── layout.tsx                           # Root
+├── page.tsx                             # /  → Homepage (categories + tool grid)
+├── globals.css
+├── not-found.tsx
+├── sitemap.ts
+│
+├── (browse)/                            # ▶ ROUTE GROUP — shared sidebar shell
+│   │
+│   ├── layout.tsx                       # ⭐ Sidebar lives here — persists on all child routes
+│   ├── _components/                     #    private — sidebar-only components
+│   │   ├── sidebar.tsx                  #    Category-aware sidebar
+│   │   ├── sidebar-link.tsx
+│   │   ├── sidebar-mobile.tsx           #    Mobile drawer (Sheet)
+│   │   └── category-tabs.tsx
+│   ├── _lib/
+│   │   └── get-active-category.ts       #    Derive category from pathname
+│   │
+│   ├── categories/
+│   │   └── [category]/
+│   │       ├── page.tsx                 # /categories/developer
+│   │       └── _components/
+│   │           └── category-hero.tsx
+│   │
+│   └── tools/                           # ▶ static per-tool routes
+│       ├── page.tsx                     # /tools        → all tools
+│       │
+│       ├── json-formatter/              # ┐
+│       │   ├── page.tsx                 # │  Fully colocated!
+│       │   ├── _components/             # │  Everything for
+│       │   │   ├── json-input.tsx       # │  this tool lives here
+│       │   │   └── json-output.tsx      # │
+│       │   └── _lib/                    # │
+│       │       └── format-json.ts       # │
+│       │                                # ┘
+│       │
+│       ├── base64/
+│       │   ├── page.tsx
+│       │   ├── _components/
+│       │   │   └── base64-tool.tsx
+│       │   └── _lib/
+│       │       └── encode.ts
+│       │
+│       ├── regex-tester/
+│       │   ├── page.tsx
+│       │   ├── _components/
+│       │   └── _lib/
+│       │
+│       ├── case-converter/
+│       │   ├── page.tsx
+│       │   ├── _components/
+│       │   └── _lib/
+│       │
+│       └── ... (one folder per tool)
+│
+└── (marketing)/
+    ├── about/page.tsx                   # /about
+    ├── privacy/page.tsx                 # /privacy
+    └── terms/page.tsx
+📌 The key insight
+Route	URL	Sidebar shows
+(browse)/categories/[category]	/categories/developer	Developer tools
+(browse)/tools/json-formatter	/tools/json-formatter	Developer tools (from registry lookup)
+The sidebar derives the active category:
+
+On /categories/X → category is X (from params)
+
+On /tools/Y → category is tools.find(t => t.id === Y).category (from registry)
+
+No category in the tool URL. Clean, bookmarkable, and the sidebar still knows.
+
+🆚 Why not /categories/[category]/[tool]?
+You could nest tools inside categories, but it breaks colocation:
+
+text
+❌  categories/[category]/
+    ├── layout.tsx
+    ├── page.tsx
+    └── [tool]/                       # Dynamic — every tool shares this folder
+        ├── page.tsx
+        └── _tools/                   # ❌ not colocated — all tools lumped together
+            ├── json-formatter/...
+            ├── base64/...
+            └── regex-tester/...
+Concern	Nested [tool]	Static per-tool ✅
+Colocation	❌ tools share one [tool]/ folder	✅ each tool own folder
+Private folders	❌ _tools/ becomes a dump	✅ _components/ + _lib/ per tool
+Type safety	❌ string lookup at runtime	✅ direct imports in page.tsx
+Code splitting	❌ harder to isolate	✅ automatic per route
+URL can lie	❌ /categories/text/json-formatter → 404 needed	✅ no ambiguity
+Verdict: static per-tool routes win for a heterogeneous tool collection.

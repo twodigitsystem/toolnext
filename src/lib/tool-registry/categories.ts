@@ -1,0 +1,111 @@
+import {
+  Type,
+  Braces,
+  ArrowLeftRight,
+  Calculator,
+  CalendarClock,
+  Image as ImageIcon,
+  FileText,
+  Palette,
+  Sparkles,
+  Search,
+  Network,
+  Shield,
+  Music,
+  Share2,
+  Wrench,
+} from "lucide-react";
+import type { Category } from "./types";
+
+export const categories: Category[] = [
+  {
+    id: "text",
+    label: "Text",
+    description: "Convert, count, transform and analyze text.",
+    icon: Type,
+  },
+  {
+    id: "developer",
+    label: "Developer",
+    description: "JSON, Base64, regex, code format and dev essentials.",
+    icon: Braces,
+  },
+  {
+    id: "converter",
+    label: "Converters",
+    description: "Units, timestamps, bases, currencies and more.",
+    icon: ArrowLeftRight,
+  },
+  {
+    id: "calculator",
+    label: "Calculators",
+    description: "Finance, health, math, taxes and everyday math.",
+    icon: Calculator,
+  },
+  {
+    id: "datetime",
+    label: "Date & Time",
+    description: "Timestamps, timezones, countdowns and clocks.",
+    icon: CalendarClock,
+  },
+  {
+    id: "image",
+    label: "Image",
+    description: "Resize, compress, convert, and edit images.",
+    icon: ImageIcon,
+  },
+  {
+    id: "pdf",
+    label: "PDF",
+    description: "Merge, split, compress, convert and sign PDFs.",
+    icon: FileText,
+  },
+  {
+    id: "color",
+    label: "Color",
+    description: "Pick, convert, contrast-check and generate colors.",
+    icon: Palette,
+  },
+  {
+    id: "generator",
+    label: "Generators",
+    description: "QR codes, passwords, UUIDs, fake data and more.",
+    icon: Sparkles,
+  },
+  {
+    id: "seo",
+    label: "SEO & Web",
+    description: "Meta tags, previews, sitemaps and web optimization.",
+    icon: Search,
+  },
+  {
+    id: "network",
+    label: "Network",
+    description: "IP tools, DNS, CIDR and network utilities.",
+    icon: Network,
+  },
+  {
+    id: "security",
+    label: "Security",
+    description: "Hashing, encryption, password strength and keys.",
+    icon: Shield,
+  },
+  {
+    id: "media",
+    label: "Media",
+    description: "Video, audio, subtitles and media converters.",
+    icon: Music,
+  },
+  {
+    id: "social",
+    label: "Social",
+    description: "Signatures, links, vCards and social helpers.",
+    icon: Share2,
+  },
+  {
+    id: "utility",
+    label: "Utility",
+    description: "Timers, dice, rulers and everyday micro-tools.",
+    icon: Wrench,
+  },
+];

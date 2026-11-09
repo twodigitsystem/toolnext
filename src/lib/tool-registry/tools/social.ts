@@ -1,0 +1,71 @@
+import {
+  AtSign,
+  Contact,
+  Hash,
+  Mail,
+  MessageCircle,
+  Share2,
+  User,
+} from "lucide-react";
+import type { Tool } from "../types";
+
+export const socialTools: Tool[] = [
+  {
+    id: "whatsapp-link",
+    name: "WhatsApp Link",
+    category: "social",
+    href: "/tools/whatsapp-link",
+    icon: MessageCircle,
+    featured: true,
+    implementation: "whatsapp-link",
+    description: "Generate WhatsApp chat links.",
+  },
+  {
+    id: "email-signature",
+    name: "Email Signature",
+    category: "social",
+    href: "/tools/email-signature",
+    icon: Mail,
+    description: "Build HTML email signatures.",
+  },
+  {
+    id: "vcard-generator",
+    name: "vCard Generator",
+    category: "social",
+    href: "/tools/vcard-generator",
+    icon: Contact,
+    description: "Create vCard contact files.",
+  },
+  {
+    id: "business-card",
+    name: "Business Card",
+    category: "social",
+    href: "/tools/business-card",
+    icon: User,
+    description: "Generate printable business cards.",
+  },
+  {
+    id: "social-counter",
+    name: "Social Counter",
+    category: "social",
+    href: "/tools/social-counter",
+    icon: Share2,
+    description: "Count characters for social platforms.",
+  },
+  {
+    id: "hashtag-generator",
+    name: "Hashtag Generator",
+    category: "social",
+    href: "/tools/hashtag-generator",
+    icon: Hash,
+    description: "Suggest relevant hashtags.",
+  },
+  {
+    id: "username-generator",
+    name: "Username Generator",
+    category: "social",
+    href: "/tools/username-generator",
+    icon: AtSign,
+    description: "Generate unique usernames.",
+  },
+];

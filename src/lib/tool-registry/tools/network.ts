@@ -1,0 +1,73 @@
+import {
+  Cpu,
+  Globe,
+  Link2,
+  MapPin,
+  Network as NetworkIcon,
+  Router,
+  Wifi,
+} from "lucide-react";
+import type { Tool } from "../types";
+
+export const networkTools: Tool[] = [
+  {
+    id: "ip-lookup",
+    name: "IP Lookup",
+    category: "network",
+    href: "/tools/ip-lookup",
+    icon: MapPin,
+    featured: true,
+    requiresBackend: true,
+    description: "Look up IP geolocation and info.",
+  },
+  {
+    id: "ip-subnet-calculator",
+    name: "IP Subnet Calculator",
+    category: "network",
+    href: "/tools/ip-subnet-calculator",
+    icon: NetworkIcon,
+    description: "Calculate subnet masks, CIDR and hosts.",
+  },
+  {
+    id: "dns-lookup",
+    name: "DNS Lookup",
+    category: "network",
+    href: "/tools/dns-lookup",
+    icon: Globe,
+    requiresBackend: true,
+    description: "Query DNS records for any domain.",
+  },
+  {
+    id: "mac-lookup",
+    name: "MAC Address Lookup",
+    category: "network",
+    href: "/tools/mac-lookup",
+    icon: Cpu,
+    description: "Look up MAC address vendor info.",
+  },
+  {
+    id: "user-agent-parser",
+    name: "User Agent Parser",
+    category: "network",
+    href: "/tools/user-agent-parser",
+    icon: Router,
+    description: "Parse browser and OS from a user agent.",
+  },
+  {
+    id: "cidr-calculator",
+    name: "CIDR Calculator",
+    category: "network",
+    href: "/tools/cidr-calculator",
+    icon: Wifi,
+    description: "Convert CIDR to IP range and mask.",
+  },
+  {
+    id: "url-parser",
+    name: "URL Parser",
+    category: "network",
+    href: "/tools/url-parser",
+    icon: Link2,
+    implementation: "url-parser",
+    description: "Break any URL into its components.",
+  },
+];
