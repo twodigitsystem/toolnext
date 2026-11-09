@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDown, Menu, Moon, Search, Sparkles, Sun } from "lucide-react";
+import { ChevronDown, Menu, Moon, Search, Sun } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -75,9 +76,13 @@ export function SiteHeader() {
       <div className="h-16 max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-primary-foreground shadow-sm group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
-              <Sparkles className="size-5" />
-            </div>
+            <Image
+              src="/icons/toolnext-monogram.svg"
+              alt=""
+              width={36}
+              height={36}
+              className="transition-transform duration-300 group-hover:scale-105"
+            />
             <span className="font-heading text-xl font-bold tracking-tight text-on-surface flex items-center">
               Tool
               <span className="text-primary group-hover:scale-110 transition-transform duration-300 inline-block">

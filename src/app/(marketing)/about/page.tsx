@@ -8,6 +8,7 @@ import {
   Wrench,
 } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   MarketingPageFrame,
@@ -53,6 +54,15 @@ export default function AboutPage() {
       description="ToolNext is growing into a practical collection of everyday utilities: easy to find, straightforward to use, and clear about what is ready."
       icon={Sparkles}
     >
+      <div className="mb-8 flex justify-center overflow-hidden rounded-3xl border border-border/70 bg-white p-5 shadow-sm sm:p-8">
+        <Image
+          src="/icons/toolnext-logo-lockup.svg"
+          alt="ToolNext — The Modern Toolkit"
+          width={760}
+          height={220}
+          className="h-auto w-full max-w-[520px]"
+        />
+      </div>
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(260px,0.7fr)]">
         <div className="space-y-8">
           <MarketingSection id="why-toolnext" title="Why we are building this">

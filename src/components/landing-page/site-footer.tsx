@@ -4,9 +4,9 @@ import {
   Check,
   Layers3,
   Mail,
-  Sparkles,
   Wrench,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { contactEmail } from "@/lib/site";
@@ -68,9 +68,13 @@ export function SiteFooter() {
               href="/"
               className="group inline-flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
             >
-              <span className="flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-400 to-violet-500 text-white shadow-lg shadow-indigo-950/30 transition-transform group-hover:-rotate-3 group-hover:scale-105">
-                <Sparkles className="size-5" aria-hidden="true" />
-              </span>
+              <Image
+                src="/icons/toolnext-monogram.svg"
+                alt=""
+                width={40}
+                height={40}
+                className="transition-transform group-hover:scale-105"
+              />
               <span className="font-heading text-xl font-bold tracking-tight text-white">
                 Tool<span className="text-indigo-300">Next</span>
               </span>

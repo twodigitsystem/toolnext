@@ -1,4 +1,4 @@
-const CACHE_NAME = "toolnext-cache-v3";
+const CACHE_NAME = "toolnext-cache-v4";
 const CACHE_PREFIX = "toolnext-cache-";
 const MAX_CACHED_PAGES = 100;
 
@@ -6,6 +6,9 @@ const STATIC_ASSETS = [
   "/",
   "/tools",
   "/offline.html",
+  "/icons/toolnext-monogram.svg",
+  "/icons/toolnext-app-icon.svg",
+  "/icons/toolnext-logo-lockup.svg",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/icon-maskable-512.png",

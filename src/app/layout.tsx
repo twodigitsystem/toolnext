@@ -39,7 +39,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.svg", type: "image/svg+xml" },
+      {
+        url: "/icons/toolnext-app-icon.svg",
+        type: "image/svg+xml",
+        sizes: "any",
+      },
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },

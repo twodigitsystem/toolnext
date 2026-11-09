@@ -96,7 +96,7 @@ The shared `/tools/[slug]` route handles all tool detail pages; adding a tool do
 
 - The project uses the `pnpm` package manager, pinned in `package.json`.
 - Deploy over HTTPS for service-worker registration and installation outside localhost. The production service worker caches the app shell and static assets, keeps up to 100 visited pages for offline use, and shows a dedicated offline page for uncached routes.
-- PWA icon assets are in `public/icons/`: 192×192 and 512×512 standard icons, a 512×512 maskable icon, and a 180×180 Apple touch icon. They are generated from `public/icon.svg`; replace that artwork and regenerate the variants if you provide final brand artwork.
+- The three supplied SVGs are extracted to `public/icons/`: `toolnext-monogram.svg` is used in the header and footer, `toolnext-app-icon.svg` is used for browser/PWA metadata, and `toolnext-logo-lockup.svg` appears on the About page. The manifest also includes PNG fallbacks (192×192 and 512×512 standard icons, a 512×512 maskable icon, and a 180×180 Apple touch icon) for platform compatibility.
 - Optional install-prompt screenshots can improve the install experience on supported browsers: one mobile screenshot and one desktop screenshot. They are not required for PWA installation.
 - `NEXT_PUBLIC_SITE_URL` sets the canonical site origin; it defaults to `https://toolnext.vercel.app`.
 - `NEXT_PUBLIC_CONTACT_EMAIL` overrides the support/privacy address shown on the legal pages; it defaults to `developer.twodigitsystem@gmail.com`.
