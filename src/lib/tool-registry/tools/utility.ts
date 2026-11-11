@@ -32,6 +32,8 @@ export const utilityTools: Tool[] = [
     category: "utility",
     href: "/tools/dice-roller",
     icon: Dices,
+    popular: true,
+    implementation: "dice-roller",
     description: "Roll one or many dice.",
   },
   {
@@ -40,6 +42,8 @@ export const utilityTools: Tool[] = [
     category: "utility",
     href: "/tools/rps-game",
     icon: Circle,
+    popular: true,
+    implementation: "rps-game",
     description: "Play against the computer.",
   },
   {
@@ -48,6 +52,8 @@ export const utilityTools: Tool[] = [
     category: "utility",
     href: "/tools/timer",
     icon: Timer,
+    popular: true,
+    implementation: "timer",
     description: "Set a countdown timer.",
   },
   {
@@ -57,6 +63,8 @@ export const utilityTools: Tool[] = [
     href: "/tools/pomodoro",
     icon: AlarmClock,
     featured: true,
+    popular: true,
+    implementation: "pomodoro",
     description: "Focus timer with work/break cycles.",
   },
   {
@@ -121,6 +129,8 @@ export const utilityTools: Tool[] = [
     category: "utility",
     href: "/tools/number-to-words",
     icon: Sparkles,
+    popular: true,
+    implementation: "number-to-words",
     description: "Convert numbers to English words.",
   },
   {

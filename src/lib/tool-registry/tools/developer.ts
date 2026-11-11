@@ -48,6 +48,9 @@ export const developerTools: Tool[] = [
     category: "developer",
     href: "/tools/json-validator",
     icon: FileJson,
+    featured: true,
+    popular: true,
+    implementation: "json-validator",
     description: "Validate JSON and find syntax errors.",
   },
   {
@@ -149,6 +152,8 @@ export const developerTools: Tool[] = [
     href: "/tools/regex-tester",
     icon: Regex,
     featured: true,
+    popular: true,
+    implementation: "regex-tester",
     description: "Test and debug regular expressions live.",
   },
   {
@@ -158,6 +163,8 @@ export const developerTools: Tool[] = [
     href: "/tools/jwt-decoder",
     icon: KeyRound,
     featured: true,
+    popular: true,
+    implementation: "jwt-decoder",
     description: "Decode JWT header, payload and verify signatures.",
   },
   {
@@ -227,6 +234,9 @@ export const developerTools: Tool[] = [
     category: "developer",
     href: "/tools/markdown-preview",
     icon: BookOpen,
+    featured: true,
+    popular: true,
+    implementation: "markdown-preview",
     description: "Live-preview Markdown as HTML.",
   },
   {

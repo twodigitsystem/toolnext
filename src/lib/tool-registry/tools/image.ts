@@ -29,6 +29,8 @@ export const imageTools: Tool[] = [
     href: "/tools/image-resizer",
     icon: Crop,
     featured: true,
+    popular: true,
+    implementation: "image-resizer",
     description: "Resize images while preserving quality.",
   },
   {

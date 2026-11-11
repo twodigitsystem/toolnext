@@ -2,12 +2,15 @@
 
 import {
   ArrowUpRight,
+  Crop,
   Download,
+  FileCode,
   Hash,
   Image as ImageIcon,
   Link2,
   LockKeyhole,
   Shuffle,
+  Upload,
 } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
@@ -556,6 +559,379 @@ export function HashGenerator() {
       <div className="mt-3">
         <ToolOutput value={digest} label={`${algorithm} digest`} rows={3} />
       </div>
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Meta Tag Generator (SEO)
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export function MetaTagGenerator() {
+  const [title, setTitle] = useState("My Amazing Page");
+  const [description, setDescription] = useState("Discover the best tools for developers and creators.");
+  const [url, setUrl] = useState("https://example.com");
+  const [image, setImage] = useState("https://example.com/og-image.png");
+  const [siteName, setSiteName] = useState("ToolNext");
+
+  const metaTags = useMemo(() => {
+    const tags = [
+      `<title>${escapeXml(title)}</title>`,
+      `<meta name="description" content="${escapeXml(description)}" />`,
+      `<meta property="og:title" content="${escapeXml(title)}" />`,
+      `<meta property="og:description" content="${escapeXml(description)}" />`,
+      `<meta property="og:url" content="${escapeXml(url)}" />`,
+      `<meta property="og:type" content="website" />`,
+      `<meta name="twitter:card" content="summary_large_image" />`,
+      `<meta name="twitter:title" content="${escapeXml(title)}" />`,
+      `<meta name="twitter:description" content="${escapeXml(description)}" />`,
+    ];
+    if (image.trim()) {
+      tags.push(`<meta property="og:image" content="${escapeXml(image.trim())}" />`);
+      tags.push(`<meta name="twitter:image" content="${escapeXml(image.trim())}" />`);
+    }
+    if (siteName.trim()) {
+      tags.push(`<meta property="og:site_name" content="${escapeXml(siteName.trim())}" />`);
+    }
+    return tags.join("\n");
+  }, [title, description, url, image, siteName]);
+
+  return (
+    <ToolCard
+      icon={FileCode}
+      title="Meta Tag Generator"
+      badge="SEO & web"
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          Generates Open Graph and Twitter Card meta tags for your HTML head.
+        </p>
+      }
+    >
+      <div className="space-y-3">
+        <ToolField id="meta-title" label="Page title" value={title} onChange={setTitle} />
+        <ToolField id="meta-desc" label="Description" value={description} onChange={setDescription} />
+        <ToolField id="meta-url" label="Page URL" value={url} onChange={setUrl} placeholder="https://example.com" />
+        <div className="grid grid-cols-2 gap-3">
+          <ToolField id="meta-image" label="OG image URL" value={image} onChange={setImage} />
+          <ToolField id="meta-site" label="Site name" value={siteName} onChange={setSiteName} />
+        </div>
+      </div>
+      <div className="mt-3">
+        <ToolOutput value={metaTags} label="Meta tags" rows={8} />
+      </div>
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Image Resizer
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export function ImageResizer() {
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState("");
+  const [width, setWidth] = useState("400");
+  const [height, setHeight] = useState("300");
+  const [maintainAspect, setMaintainAspect] = useState(true);
+  const [resultUrl, setResultUrl] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setFile(f);
+    setPreview(URL.createObjectURL(f));
+    setResultUrl("");
+    setError("");
+
+    // Set initial dimensions from image
+    const img = new window.Image();
+    img.onload = () => {
+      setWidth(String(img.naturalWidth));
+      setHeight(String(img.naturalHeight));
+    };
+    img.src = URL.createObjectURL(f);
+  };
+
+  const resize = () => {
+    if (!file) {
+      setError("Select an image first.");
+      return;
+    }
+    const w = Number(width);
+    const h = Number(height);
+    if (!Number.isInteger(w) || !Number.isInteger(h) || w < 1 || h < 1 || w > 4096 || h > 4096) {
+      setError("Dimensions must be whole numbers from 1 to 4096.");
+      return;
+    }
+    setBusy(true);
+    setError("");
+
+    const img = new window.Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        setError("Your browser does not support canvas operations.");
+        setBusy(false);
+        return;
+      }
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL(file?.type || "image/png", 0.92);
+      setResultUrl(dataUrl);
+      setBusy(false);
+    };
+    img.onerror = () => {
+      setError("Could not load the image.");
+      setBusy(false);
+    };
+    img.src = preview;
+  };
+
+  const download = () => {
+    if (!resultUrl) return;
+    const link = document.createElement("a");
+    const ext = file?.type.split("/")[1] || "png";
+    link.download = `resized-${width}x${height}.${ext}`;
+    link.href = resultUrl;
+    link.click();
+  };
+
+  return (
+    <ToolCard
+      icon={Crop}
+      title="Image Resizer"
+      badge="Image"
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          All processing happens locally in your browser. Original image is not uploaded.
+        </p>
+      }
+    >
+      <div className="space-y-3">
+        <label
+          htmlFor="image-resizer-file"
+          className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-input bg-surface-low p-6 text-center hover:border-primary/50 transition-colors"
+        >
+          <Upload className="size-6 text-on-surface-variant" aria-hidden="true" />
+          <span className="text-sm font-medium text-on-surface-variant">
+            {file ? file.name : "Click to choose an image"}
+          </span>
+          <span className="text-xs text-outline">
+            PNG, JPEG, WebP, GIF, BMP
+          </span>
+          <input
+            id="image-resizer-file"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif,image/bmp"
+            onChange={handleFile}
+            className="hidden"
+          />
+        </label>
+        {preview && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={preview}
+            alt="Preview"
+            className="max-h-40 w-full rounded-xl border border-border object-contain bg-surface-low"
+          />
+        )}
+        <div className="grid grid-cols-2 gap-3">
+          <ToolField
+            id="resize-width"
+            label="Width (px)"
+            type="number"
+            min={1}
+            max={4096}
+            value={width}
+            onChange={(v) => {
+              setWidth(v);
+              if (maintainAspect && file && Number(v) > 0) {
+                const ratio = Number(v) / Number(width);
+                if (Number.isFinite(ratio)) {
+                  setHeight(String(Math.round(Number(height) * ratio)));
+                }
+              }
+            }}
+          />
+          <ToolField
+            id="resize-height"
+            label="Height (px)"
+            type="number"
+            min={1}
+            max={4096}
+            value={height}
+            onChange={(v) => {
+              setHeight(v);
+              if (maintainAspect && file && Number(v) > 0) {
+                const ratio = Number(v) / Number(height);
+                if (Number.isFinite(ratio)) {
+                  setWidth(String(Math.round(Number(width) * ratio)));
+                }
+              }
+            }}
+          />
+        </div>
+        <label className="flex items-center gap-2 text-xs text-on-surface-variant cursor-pointer">
+          <input
+            type="checkbox"
+            checked={maintainAspect}
+            onChange={(e) => setMaintainAspect(e.target.checked)}
+            className="size-3.5 accent-primary"
+          />
+          Maintain aspect ratio
+        </label>
+      </div>
+      <Button
+        type="button"
+        className="mt-3 w-full"
+        onClick={() => resize()}
+        disabled={busy || !file}
+      >
+        {busy ? "Resizing…" : "Resize image"}
+      </Button>
+      {error && <p role="alert" className="mt-2 text-xs text-destructive">{error}</p>}
+      {resultUrl && (
+        <div className="mt-4 space-y-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={resultUrl}
+            alt="Resized result"
+            className="max-h-48 w-full rounded-xl border border-border object-contain bg-surface-low"
+          />
+          <Button type="button" variant="outline" className="w-full" onClick={download}>
+            <Download className="size-4 mr-2" />
+            Download resized image
+          </Button>
+        </div>
+      )}
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Image Compressor
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export function ImageCompressor() {
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState("");
+  const [quality, setQuality] = useState("0.7");
+  const [resultUrl, setResultUrl] = useState("");
+  const [originalSize, setOriginalSize] = useState(0);
+  const [resultSize, setResultSize] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setFile(f);
+    setPreview(URL.createObjectURL(f));
+    setResultUrl("");
+    setOriginalSize(f.size);
+    setError("");
+  };
+
+  const compress = () => {
+    if (!file) { setError("Select an image first."); return; }
+    const q = Number(quality);
+    if (q < 0.01 || q > 1) { setError("Quality must be between 0.01 and 1."); return; }
+    setBusy(true); setError("");
+
+    const img = new window.Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { setError("Canvas not supported."); setBusy(false); return; }
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob((blob) => {
+        if (!blob) { setError("Compression failed."); setBusy(false); return; }
+        setResultUrl(URL.createObjectURL(blob));
+        setResultSize(blob.size);
+        setBusy(false);
+      }, file.type || "image/jpeg", q);
+    };
+    img.onerror = () => { setError("Could not load image."); setBusy(false); };
+    img.src = preview;
+  };
+
+  const download = () => {
+    if (!resultUrl) return;
+    const link = document.createElement("a");
+    const ext = file?.type.split("/")[1] || "jpg";
+    link.download = `compressed.${ext}`;
+    link.href = resultUrl;
+    link.click();
+  };
+
+  const savings = originalSize > 0 && resultSize > 0
+    ? Math.round((1 - resultSize / originalSize) * 100)
+    : 0;
+
+  return (
+    <ToolCard
+      icon={Hash}
+      title="Image Compressor"
+      badge="Image"
+      footer={<p className="text-xs text-on-surface-variant">All processing happens locally. Nothing is uploaded.</p>}
+    >
+      <label
+        htmlFor="ic-file"
+        className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-input bg-surface-low p-6 text-center hover:border-primary/50 transition-colors"
+      >
+        <span className="text-sm font-medium text-on-surface-variant">
+          {file ? file.name : "Click to choose an image"}
+        </span>
+        <input id="ic-file" type="file" accept="image/png,image/jpeg,image/webp" onChange={handleFile} className="hidden" />
+      </label>
+      {preview && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={preview} alt="Preview" className="mt-3 max-h-32 w-full rounded-xl border border-border object-contain bg-surface-low" />
+      )}
+      {file && (
+        <div className="mt-3 space-y-1.5">
+          <label htmlFor="ic-quality" className="text-xs font-semibold text-on-surface-variant">
+            Quality: {quality} ({Math.round(originalSize / 1024)} KB → {Math.round(resultSize / 1024)} KB)
+          </label>
+          <input id="ic-quality" type="range" min="0.01" max="1" step="0.01" value={quality} onChange={(e) => setQuality(e.target.value)} className="w-full accent-primary" />
+        </div>
+      )}
+      <Button type="button" className="mt-3 w-full" onClick={compress} disabled={busy || !file}>
+        {busy ? "Compressing…" : "Compress image"}
+      </Button>
+      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+      {resultUrl && (
+        <div className="mt-4 space-y-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={resultUrl} alt="Compressed" className="max-h-40 w-full rounded-xl border border-border object-contain bg-surface-low" />
+          <div className="grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="rounded-xl bg-surface-low p-2">
+              <p className="font-bold text-on-surface">{Math.round(originalSize / 1024)} KB</p>
+              <p className="text-on-surface-variant">Original</p>
+            </div>
+            <div className="rounded-xl bg-surface-low p-2">
+              <p className="font-bold text-on-surface">{Math.round(resultSize / 1024)} KB</p>
+              <p className="text-on-surface-variant">Compressed</p>
+            </div>
+            <div className="rounded-xl bg-green-500/10 p-2">
+              <p className="font-bold text-green-600">{savings}%</p>
+              <p className="text-on-surface-variant">Saved</p>
+            </div>
+          </div>
+          <Button type="button" variant="outline" className="w-full" onClick={download}>
+            <Download className="size-4 mr-2" />
+            Download compressed image
+          </Button>
+        </div>
+      )}
     </ToolCard>
   );
 }

@@ -30,6 +30,8 @@ export const datetimeTools: Tool[] = [
     href: "/tools/timezone-converter",
     icon: Globe2,
     featured: true,
+    popular: true,
+    implementation: "timezone-converter",
     description: "Convert time between any two timezones.",
   },
   {

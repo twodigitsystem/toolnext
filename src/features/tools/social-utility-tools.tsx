@@ -1,13 +1,23 @@
 "use client";
 
 import {
+  AlarmClock,
   Captions,
   Circle,
+  Dices,
+  Hand,
   MessageCircle,
+  Play,
+  Pause,
   RotateCcw,
+  Scissors,
   Shuffle,
+  SkipForward,
+  Sparkles,
+  Square,
+  Timer as TimerIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ToolCard } from "@/components/landing-page/quick-tools/tool-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -336,6 +346,400 @@ export function CoinFlip() {
           {error}
         </p>
       )}
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Pomodoro Timer
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+type PomodoroPhase = "work" | "break" | "long-break";
+
+export function Pomodoro() {
+  const [phase, setPhase] = useState<PomodoroPhase>("work");
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [running, setRunning] = useState(false);
+  const [cycle, setCycle] = useState(1);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const workDuration = 25 * 60;
+  const breakDuration = 5 * 60;
+  const longBreakDuration = 15 * 60;
+
+  const clearTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  const reset = () => {
+    clearTimer();
+    setRunning(false);
+    setPhase("work");
+    setTimeLeft(workDuration);
+    setCycle(1);
+  };
+
+  const skip = () => {
+    clearTimer();
+    setRunning(false);
+    if (phase === "work") {
+      if (cycle % 4 === 0) {
+        setPhase("long-break");
+        setTimeLeft(longBreakDuration);
+      } else {
+        setPhase("break");
+        setTimeLeft(breakDuration);
+      }
+    } else {
+      setPhase("work");
+      setTimeLeft(workDuration);
+      setCycle((c) => c + 1);
+    }
+  };
+
+  const toggle = () => {
+    if (running) {
+      clearTimer();
+      setRunning(false);
+    } else {
+      setRunning(true);
+    }
+  };
+
+  useEffect(() => {
+    if (!running) return;
+    intervalRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearTimer();
+          setRunning(false);
+          if (phase === "work") {
+            if (cycle % 4 === 0) {
+              setPhase("long-break");
+              return longBreakDuration;
+            }
+            setPhase("break");
+            return breakDuration;
+          }
+          setPhase("work");
+          setCycle((c) => c + 1);
+          return workDuration;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return clearTimer;
+  }, [running, phase, cycle, workDuration, breakDuration, longBreakDuration]);
+
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const display = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+  const progress =
+    phase === "work"
+      ? 1 - timeLeft / workDuration
+      : phase === "break"
+        ? 1 - timeLeft / breakDuration
+        : 1 - timeLeft / longBreakDuration;
+
+  const phaseLabel =
+    phase === "work" ? "Focus" : phase === "break" ? "Short break" : "Long break";
+
+  return (
+    <ToolCard
+      icon={AlarmClock}
+      title="Pomodoro Timer"
+      badge="Utility"
+      action={
+        <Button type="button" variant="ghost" size="sm" onClick={skip} disabled={!running && timeLeft === workDuration} aria-label="Skip phase">
+          <SkipForward className="size-3.5" aria-hidden="true" />
+          Skip
+        </Button>
+      }
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          Cycle {cycle} — every 4th break is a long 15-minute break. Timer runs in this browser.
+        </p>
+      }
+    >
+      <div className="flex flex-col items-center gap-3">
+        <div className="relative flex size-44 items-center justify-center">
+          <svg className="absolute inset-0 -rotate-90" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="6"
+              className="text-surface-low"
+            />
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="6"
+              strokeDasharray={`${2 * Math.PI * 45}`}
+              strokeDashoffset={2 * Math.PI * 45 * (1 - progress)}
+              className="text-primary transition-all duration-1000"
+              strokeLinecap="round"
+            />
+          </svg>
+          <div className="text-center">
+            <p className="font-heading text-4xl font-bold text-on-surface tabular-nums">
+              {display}
+            </p>
+            <p className="mt-1 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+              {phaseLabel}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <Button type="button" className="min-w-28" onClick={toggle}>
+            {running ? <Pause className="size-4 mr-1" /> : <Play className="size-4 mr-1" />}
+            {running ? "Pause" : "Start"}
+          </Button>
+          <Button type="button" variant="outline" onClick={reset}>
+            <RotateCcw className="size-4" />
+          </Button>
+        </div>
+      </div>
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Dice Roller
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export function DiceRoller() {
+  const [count, setCount] = useState("2");
+  const [sides, setSides] = useState("6");
+  const [results, setResults] = useState<number[]>([]);
+
+  const roll = () => {
+    const n = Number(count);
+    const s = Number(sides);
+    if (!Number.isInteger(n) || !Number.isInteger(s) || n < 1 || n > 100 || s < 2 || s > 1000) return;
+    const arr = new Uint32Array(n);
+    crypto.getRandomValues(arr);
+    setResults(Array.from(arr, (v) => (v % s) + 1));
+  };
+
+  const sum = results.reduce((a, b) => a + b, 0);
+
+  return (
+    <ToolCard
+      icon={Dices}
+      title="Dice Roller"
+      badge="Utility"
+      footer={<p className="text-xs text-on-surface-variant">{results.length > 0 ? `${results.length}d${sides} = ${sum}` : "Configure and roll."}</p>}
+    >
+      <div className="flex gap-3">
+        <div className="flex-1 space-y-1.5">
+          <label htmlFor="dice-count" className="text-xs font-semibold text-on-surface-variant">Number of dice</label>
+          <input id="dice-count" type="number" min="1" max="100" value={count} onChange={(e) => setCount(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+        </div>
+        <div className="flex-1 space-y-1.5">
+          <label htmlFor="dice-sides" className="text-xs font-semibold text-on-surface-variant">Sides per die</label>
+          <input id="dice-sides" type="number" min="2" max="1000" value={sides} onChange={(e) => setSides(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+        </div>
+      </div>
+      <Button type="button" className="mt-3 w-full" onClick={roll}>Roll dice</Button>
+      {results.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {results.map((r, i) => (
+            <span key={i} className="inline-flex size-10 items-center justify-center rounded-xl bg-primary/10 font-heading text-lg font-bold text-primary">{r}</span>
+          ))}
+        </div>
+      )}
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Rock Paper Scissors
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+type RpsChoice = "rock" | "paper" | "scissors";
+
+function rpsWinner(player: RpsChoice, computer: RpsChoice): "win" | "lose" | "tie" {
+  if (player === computer) return "tie";
+  if (
+    (player === "rock" && computer === "scissors") ||
+    (player === "paper" && computer === "rock") ||
+    (player === "scissors" && computer === "paper")
+  ) return "win";
+  return "lose";
+}
+
+const rpsEmoji: Record<RpsChoice, string> = { rock: "🪨", paper: "📄", scissors: "✂️" };
+
+export function RpsGame() {
+  const [player, setPlayer] = useState<RpsChoice | null>(null);
+  const [computer, setComputer] = useState<RpsChoice | null>(null);
+  const [result, setResult] = useState<"win" | "lose" | "tie" | null>(null);
+  const [score, setScore] = useState({ player: 0, computer: 0, tie: 0 });
+
+  const play = (choice: RpsChoice) => {
+    const choices: RpsChoice[] = ["rock", "paper", "scissors"];
+    const compChoice = choices[Math.floor(Math.random() * 3)];
+    const outcome = rpsWinner(choice, compChoice);
+    setPlayer(choice);
+    setComputer(compChoice);
+    setResult(outcome);
+    setScore((s) => ({
+      player: s.player + (outcome === "win" ? 1 : 0),
+      computer: s.computer + (outcome === "lose" ? 1 : 0),
+      tie: s.tie + (outcome === "tie" ? 1 : 0),
+    }));
+  };
+
+  const resultLabel = result === "win" ? "You win!" : result === "lose" ? "Computer wins!" : "Tie!";
+  const resultColor = result === "win" ? "text-green-600" : result === "lose" ? "text-destructive" : "text-on-surface-variant";
+
+  return (
+    <ToolCard
+      icon={Hand}
+      title="Rock Paper Scissors"
+      badge="Utility"
+      footer={<p className="text-xs text-on-surface-variant">W: {score.player} · L: {score.computer} · T: {score.tie}</p>}
+    >
+      <div className="flex justify-center gap-3">
+        {(["rock", "paper", "scissors"] as const).map((choice) => (
+          <Button key={choice} type="button" variant={player === choice ? "default" : "outline"} onClick={() => play(choice)} className="flex-col gap-1 h-auto py-3 min-w-20">
+            <span className="text-2xl">{rpsEmoji[choice]}</span>
+            <span className="text-[10px] capitalize">{choice}</span>
+          </Button>
+        ))}
+      </div>
+      {result && (
+        <div className="mt-4 text-center">
+          <div className="flex justify-center gap-8 text-3xl">
+            <span>{rpsEmoji[player!]}</span>
+            <span className="text-xl text-on-surface-variant">vs</span>
+            <span>{rpsEmoji[computer!]}</span>
+          </div>
+          <p className={`mt-2 text-lg font-bold ${resultColor}`}>{resultLabel}</p>
+        </div>
+      )}
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Timer (countdown)
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export function Timer() {
+  const [minutes, setMinutes] = useState("5");
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [running, setRunning] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const clearTimer = () => {
+    if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+  };
+
+  const start = () => {
+    const m = Number(minutes);
+    if (!Number.isFinite(m) || m < 0.1 || m > 999) return;
+    clearTimer();
+    setTimeLeft(Math.round(m * 60));
+    setRunning(true);
+  };
+
+  const stop = () => { clearTimer(); setRunning(false); };
+  const reset = () => { clearTimer(); setRunning(false); setTimeLeft(0); };
+
+  useEffect(() => {
+    if (!running || timeLeft <= 0) return;
+    intervalRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) { clearTimer(); setRunning(false); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+    return clearTimer;
+  }, [running, timeLeft]);
+
+  const mins = Math.floor(timeLeft / 60);
+  const secs = timeLeft % 60;
+  const display = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+
+  return (
+    <ToolCard
+      icon={TimerIcon}
+      title="Timer"
+      badge="Utility"
+      footer={<p className="text-xs text-on-surface-variant">{running ? "Running…" : timeLeft > 0 ? "Paused" : "Set time and start."}</p>}
+    >
+      {timeLeft === 0 && !running ? (
+        <div className="space-y-1.5">
+          <label htmlFor="timer-minutes" className="text-xs font-semibold text-on-surface-variant">Minutes</label>
+          <div className="flex gap-2">
+            <input id="timer-minutes" type="number" min="0.1" max="999" step="0.1" value={minutes} onChange={(e) => setMinutes(e.target.value)} className="h-9 flex-1 rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+            <Button type="button" onClick={start}>Start</Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-4">
+          <p className="font-heading text-5xl font-bold text-primary tabular-nums">{display}</p>
+          <div className="flex gap-3">
+            {running ? (
+              <Button type="button" variant="outline" onClick={stop}>Pause</Button>
+            ) : (
+              <Button type="button" onClick={start} disabled={timeLeft <= 0}>Resume</Button>
+            )}
+            <Button type="button" variant="outline" onClick={reset}>Reset</Button>
+          </div>
+        </div>
+      )}
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Number to Words
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+const ONES = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+
+function numberToEnglish(n: number): string {
+  if (n === 0) return "zero";
+  if (n < 0) return `minus ${numberToEnglish(-n)}`;
+  if (n < 20) return ONES[n];
+  if (n < 100) return `${TENS[Math.floor(n / 10)]}${n % 10 ? `-${ONES[n % 10]}` : ""}`;
+  if (n < 1000) return `${ONES[Math.floor(n / 100)]} hundred${n % 100 ? ` and ${numberToEnglish(n % 100)}` : ""}`;
+  if (n < 1_000_000) return `${numberToEnglish(Math.floor(n / 1000))} thousand${n % 1000 ? ` ${numberToEnglish(n % 1000)}` : ""}`;
+  if (n < 1_000_000_000) return `${numberToEnglish(Math.floor(n / 1_000_000))} million${n % 1_000_000 ? ` ${numberToEnglish(n % 1_000_000)}` : ""}`;
+  if (n < 1_000_000_000_000) return `${numberToEnglish(Math.floor(n / 1_000_000_000))} billion${n % 1_000_000_000 ? ` ${numberToEnglish(n % 1_000_000_000)}` : ""}`;
+  return `${numberToEnglish(Math.floor(n / 1_000_000_000_000))} trillion${n % 1_000_000_000_000 ? ` ${numberToEnglish(n % 1_000_000_000_000)}` : ""}`;
+}
+
+export function NumberToWords() {
+  const [number, setNumber] = useState("1234");
+  const n = Number(number);
+  const valid = number.trim() !== "" && Number.isFinite(n) && Number.isSafeInteger(n) && n >= -999_999_999_999_999 && n <= 999_999_999_999_999;
+  const result = valid ? numberToEnglish(n) : "";
+
+  return (
+    <ToolCard
+      icon={Sparkles}
+      title="Number to Words"
+      badge="Utility"
+      footer={<p className="text-xs text-on-surface-variant">Converts whole numbers up to 999 trillion.</p>}
+    >
+      <label htmlFor="ntw-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">Number</label>
+      <input id="ntw-input" type="number" value={number} onChange={(e) => setNumber(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+      {!valid && number.trim() && <p className="mt-1 text-xs text-destructive">Enter a whole number between -999 trillion and 999 trillion.</p>}
+      <div className="mt-3"><ToolOutput value={result} label="In English" rows={3} /></div>
     </ToolCard>
   );
 }

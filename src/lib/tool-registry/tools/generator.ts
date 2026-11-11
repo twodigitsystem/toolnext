@@ -24,6 +24,7 @@ export const generatorTools: Tool[] = [
     icon: KeyRound,
     featured: true,
     popular: true,
+    implementation: "password-generator",
     description: "Generate strong, secure random passwords.",
   },
   {
@@ -34,6 +35,7 @@ export const generatorTools: Tool[] = [
     icon: QrCode,
     featured: true,
     popular: true,
+    implementation: "qr-code",
     description: "Create QR codes for links, text, vCards and WiFi.",
   },
   {

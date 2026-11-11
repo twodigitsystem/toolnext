@@ -59,6 +59,9 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/text-diff",
     icon: ArrowUpDown,
+    featured: true,
+    popular: true,
+    implementation: "text-diff",
     description: "Compare two texts and highlight changes.",
   },
   {
@@ -85,6 +88,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/sort-lines",
     icon: ArrowDownWideNarrow,
+    popular: true,
+    implementation: "sort-lines",
     description: "Sort lines alphabetically, numerically or randomly.",
   },
   {
@@ -102,6 +107,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/lorem-ipsum",
     icon: Quote,
+    popular: true,
+    implementation: "lorem-ipsum",
     description: "Generate placeholder text by paragraph, word or list.",
   },
   {
@@ -110,6 +117,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/find-replace",
     icon: Replace,
+    popular: true,
+    implementation: "find-replace",
     description: "Replace text with regex or plain text.",
   },
   {
@@ -126,6 +135,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/remove-line-breaks",
     icon: Eraser,
+    popular: true,
+    implementation: "remove-line-breaks",
     description: "Strip newlines and join text into one line.",
   },
   {
@@ -134,6 +145,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/add-line-numbers",
     icon: ListOrdered,
+    popular: true,
+    implementation: "add-line-numbers",
     description: "Prefix each line with a number.",
   },
   {
@@ -166,6 +179,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/strip-html",
     icon: AlignLeft,
+    popular: true,
+    implementation: "strip-html",
     description: "Remove HTML tags and keep plain text.",
   },
   {
@@ -174,6 +189,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/extract-emails",
     icon: Mail,
+    popular: true,
+    implementation: "extract-emails",
     description: "Find all email addresses in a block of text.",
   },
   {
@@ -182,6 +199,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/extract-urls",
     icon: Link2,
+    popular: true,
+    implementation: "extract-urls",
     description: "Extract every URL from any text.",
   },
   {
@@ -190,6 +209,8 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/text-stats",
     icon: BarChart3,
+    popular: true,
+    implementation: "text-stats",
     description: "Readability, complexity and text analytics.",
   },
 ];

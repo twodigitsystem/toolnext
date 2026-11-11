@@ -28,6 +28,8 @@ export const calculatorTools: Tool[] = [
     category: "calculator",
     href: "/tools/basic-calculator",
     icon: Calculator,
+    popular: true,
+    implementation: "basic-calculator",
     description: "Simple arithmetic calculator.",
   },
   {
@@ -55,6 +57,8 @@ export const calculatorTools: Tool[] = [
     href: "/tools/age-calculator",
     icon: Calendar,
     featured: true,
+    popular: true,
+    implementation: "age-calculator",
     description: "Calculate exact age in years, months and days.",
   },
   {
@@ -64,6 +68,8 @@ export const calculatorTools: Tool[] = [
     href: "/tools/bmi-calculator",
     icon: Scale,
     featured: true,
+    popular: true,
+    implementation: "bmi-calculator",
     description: "Body Mass Index with health categories.",
   },
   {

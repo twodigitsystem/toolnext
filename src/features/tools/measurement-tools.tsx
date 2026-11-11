@@ -500,3 +500,214 @@ export function HexToRgb() {
     </ToolCard>
   );
 }
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * RGB to HEX
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export function RgbToHex() {
+  const [r, setR] = useState("79");
+  const [g, setG] = useState("70");
+  const [b, setB] = useState("229");
+
+  const valid = [r, g, b].every((v) => {
+    const n = Number(v);
+    return Number.isInteger(n) && n >= 0 && n <= 255;
+  });
+
+  const hex = valid
+    ? `#${[r, g, b].map((v) => Number(v).toString(16).padStart(2, "0").toUpperCase()).join("")}`
+    : "";
+
+  return (
+    <ToolCard
+      icon={Pipette}
+      title="RGB to HEX"
+      badge="Color"
+      footer={<p className="text-xs text-on-surface-variant">Each value must be 0–255.</p>}
+    >
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: "R", value: r, set: setR },
+          { label: "G", value: g, set: setG },
+          { label: "B", value: b, set: setB },
+        ].map(({ label, value, set }) => (
+          <div key={label} className="space-y-1.5">
+            <label htmlFor={`rgb-${label}`} className="text-xs font-semibold text-on-surface-variant">{label}</label>
+            <input id={`rgb-${label}`} type="number" min="0" max="255" value={value} onChange={(e) => set(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+          </div>
+        ))}
+      </div>
+      {!valid && <p role="alert" className="mt-2 text-xs text-destructive">All values must be whole numbers between 0 and 255.</p>}
+      {hex && (
+        <div className="mt-4 flex items-center gap-3">
+          <span className="size-10 shrink-0 rounded-lg border border-border" style={{ backgroundColor: hex }} />
+          <ToolOutput value={hex} label="HEX value" />
+        </div>
+      )}
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * HSL Converter
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+function hslToRgb(h: number, s: number, l: number) {
+  s /= 100;
+  l /= 100;
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  let r = 0, g = 0, b = 0;
+  if (h < 60) { r = c; g = x; }
+  else if (h < 120) { r = x; g = c; }
+  else if (h < 180) { g = c; b = x; }
+  else if (h < 240) { g = x; b = c; }
+  else if (h < 300) { r = x; b = c; }
+  else { r = c; b = x; }
+  return {
+    r: Math.round((r + m) * 255),
+    g: Math.round((g + m) * 255),
+    b: Math.round((b + m) * 255),
+  };
+}
+
+export function HslConverter() {
+  const [h, setH] = useState("260");
+  const [s, setS] = useState("75");
+  const [l, setL] = useState("58");
+
+  const valid = [h, s, l].every((v) => Number.isFinite(Number(v)))
+    && Number(h) >= 0 && Number(h) <= 360
+    && Number(s) >= 0 && Number(s) <= 100
+    && Number(l) >= 0 && Number(l) <= 100;
+
+  const rgb = valid ? hslToRgb(Number(h), Number(s), Number(l)) : null;
+  const hex = rgb ? `#${[rgb.r, rgb.g, rgb.b].map((v) => v.toString(16).padStart(2, "0").toUpperCase()).join("")}` : "";
+
+  return (
+    <ToolCard
+      icon={Pipette}
+      title="HSL Converter"
+      badge="Color"
+      footer={<p className="text-xs text-on-surface-variant">Hue 0–360, Saturation & Lightness 0–100%.</p>}
+    >
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: "H", value: h, set: setH },
+          { label: "S%", value: s, set: setS },
+          { label: "L%", value: l, set: setL },
+        ].map(({ label, value, set }) => (
+          <div key={label} className="space-y-1.5">
+            <label className="text-xs font-semibold text-on-surface-variant">{label}</label>
+            <input type="number" min="0" max={label === "H" ? "360" : "100"} value={value} onChange={(e) => set(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+          </div>
+        ))}
+      </div>
+      {!valid && <p role="alert" className="mt-2 text-xs text-destructive">Check ranges: H 0–360, S & L 0–100.</p>}
+      {rgb && (
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center gap-3">
+            <span className="size-10 shrink-0 rounded-lg border border-border" style={{ backgroundColor: hex }} />
+            <div className="flex-1">
+              <p className="font-mono text-sm font-bold text-primary">{hex}</p>
+              <p className="font-mono text-xs text-on-surface-variant">rgb({rgb.r}, {rgb.g}, {rgb.b})</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </ToolCard>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Contrast Checker
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+function hexToRgbValues(hex: string): { r: number; g: number; b: number } | null {
+  const n = hex.trim().replace(/^#/, "");
+  if (!/^(?:[\da-f]{3}|[\da-f]{6})$/i.test(n)) return null;
+  const e = n.length === 3 ? n.split("").map((d) => d + d).join("") : n;
+  return { r: Number.parseInt(e.slice(0, 2), 16), g: Number.parseInt(e.slice(2, 4), 16), b: Number.parseInt(e.slice(4, 6), 16) };
+}
+
+function relativeLuminance(r: number, g: number, b: number) {
+  const [rs, gs, bs] = [r, g, b].map((v) => {
+    const s = v / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+function contrastRatio(c1: string, c2: string) {
+  const rgb1 = hexToRgbValues(c1);
+  const rgb2 = hexToRgbValues(c2);
+  if (!rgb1 || !rgb2) return null;
+  const l1 = relativeLuminance(rgb1.r, rgb1.g, rgb1.b);
+  const l2 = relativeLuminance(rgb2.r, rgb2.g, rgb2.b);
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function wcagLevel(ratio: number) {
+  const aa = ratio >= 4.5 ? "Pass" : ratio >= 3 ? "Pass (large)" : "Fail";
+  const aaa = ratio >= 7 ? "Pass" : "Fail";
+  return { aa, aaa };
+}
+
+export function ContrastChecker() {
+  const [fg, setFg] = useState("#000000");
+  const [bg, setBg] = useState("#FFFFFF");
+
+  const ratio = contrastRatio(fg, bg);
+  const level = ratio ? wcagLevel(ratio) : null;
+
+  return (
+    <ToolCard
+      icon={Pipette}
+      title="Contrast Checker"
+      badge="Color"
+      footer={<p className="text-xs text-on-surface-variant">WCAG 2.1 AA requires 4.5:1 (normal) or 3:1 (large). AAA requires 7:1.</p>}
+    >
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <label htmlFor="cc-fg" className="text-xs font-semibold text-on-surface-variant">Foreground</label>
+          <div className="flex items-center gap-2">
+            <input id="cc-fg" value={fg} onChange={(e) => setFg(e.target.value)} className="h-9 flex-1 rounded-lg border border-input bg-surface-low px-3 font-mono text-sm text-on-surface" />
+            <span className="size-8 shrink-0 rounded-lg border border-border" style={{ backgroundColor: fg }} />
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <label htmlFor="cc-bg" className="text-xs font-semibold text-on-surface-variant">Background</label>
+          <div className="flex items-center gap-2">
+            <input id="cc-bg" value={bg} onChange={(e) => setBg(e.target.value)} className="h-9 flex-1 rounded-lg border border-input bg-surface-low px-3 font-mono text-sm text-on-surface" />
+            <span className="size-8 shrink-0 rounded-lg border border-border" style={{ backgroundColor: bg }} />
+          </div>
+        </div>
+      </div>
+      {ratio !== null && level ? (
+        <div className="mt-4 space-y-3">
+          <div className="rounded-xl bg-primary/5 p-4 text-center">
+            <p className="text-xs text-on-surface-variant">Contrast ratio</p>
+            <p className="font-heading text-3xl font-bold text-primary">{ratio.toFixed(2)}:1</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className={`rounded-xl p-3 text-center text-sm font-semibold ${level.aa === "Fail" ? "bg-destructive/10 text-destructive" : "bg-green-500/10 text-green-700"}`}>
+              AA: {level.aa}
+            </div>
+            <div className={`rounded-xl p-3 text-center text-sm font-semibold ${level.aaa === "Fail" ? "bg-destructive/10 text-destructive" : "bg-green-500/10 text-green-700"}`}>
+              AAA: {level.aaa}
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-2 rounded-xl p-4 text-sm font-semibold" style={{ backgroundColor: bg, color: fg }}>
+            Preview text
+          </div>
+        </div>
+      ) : (
+        <p className="mt-3 text-xs text-destructive">Enter valid 3- or 6-digit HEX colors.</p>
+      )}
+    </ToolCard>
+  );
+}

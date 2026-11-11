@@ -19,6 +19,8 @@ export const seoTools: Tool[] = [
     href: "/tools/meta-tag-generator",
     icon: FileCode,
     featured: true,
+    popular: true,
+    implementation: "meta-tag-generator",
     description: "Generate SEO meta tags for any page.",
   },
   {

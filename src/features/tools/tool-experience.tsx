@@ -215,6 +215,191 @@ const toolComponents: Record<ToolImplementation, ComponentType> = {
       ),
     { loading },
   ),
+  "regex-tester": dynamic(
+    () =>
+      import("@/features/tools/developer-advanced-tools").then(
+        (module) => module.RegexTester,
+      ),
+    { loading },
+  ),
+  "json-validator": dynamic(
+    () =>
+      import("@/features/tools/developer-advanced-tools").then(
+        (module) => module.JsonValidator,
+      ),
+    { loading },
+  ),
+  "text-diff": dynamic(
+    () =>
+      import("@/features/tools/developer-advanced-tools").then(
+        (module) => module.TextDiff,
+      ),
+    { loading },
+  ),
+  "markdown-preview": dynamic(
+    () =>
+      import("@/features/tools/developer-advanced-tools").then(
+        (module) => module.MarkdownPreview,
+      ),
+    { loading },
+  ),
+  "password-generator": dynamic(
+    () =>
+      import("@/features/tools/generator-tools").then(
+        (module) => module.PasswordGenerator,
+      ),
+    { loading },
+  ),
+  "qr-code": dynamic(
+    () =>
+      import("@/features/tools/generator-tools").then(
+        (module) => module.QrCodeGenerator,
+      ),
+    { loading },
+  ),
+  "jwt-decoder": dynamic(
+    () =>
+      import("@/features/tools/developer-advanced-tools").then(
+        (module) => module.JwtDecoder,
+      ),
+    { loading },
+  ),
+  "timestamp-converter": dynamic(
+    () =>
+      import("@/features/tools/datetime-tools").then(
+        (module) => module.TimestampConverter,
+      ),
+    { loading },
+  ),
+  "timezone-converter": dynamic(
+    () =>
+      import("@/features/tools/datetime-tools").then(
+        (module) => module.TimezoneConverter,
+      ),
+    { loading },
+  ),
+  "age-calculator": dynamic(
+    () =>
+      import("@/features/tools/calculator-tools").then(
+        (module) => module.AgeCalculator,
+      ),
+    { loading },
+  ),
+  "bmi-calculator": dynamic(
+    () =>
+      import("@/features/tools/calculator-tools").then(
+        (module) => module.BmiCalculator,
+      ),
+    { loading },
+  ),
+  "meta-tag-generator": dynamic(
+    () =>
+      import("@/features/tools/web-tools").then(
+        (module) => module.MetaTagGenerator,
+      ),
+    { loading },
+  ),
+  pomodoro: dynamic(
+    () =>
+      import("@/features/tools/social-utility-tools").then(
+        (module) => module.Pomodoro,
+      ),
+    { loading },
+  ),
+  "lorem-ipsum": dynamic(
+    () =>
+      import("@/features/tools/text-developer-tools").then(
+        (module) => module.LoremIpsum,
+      ),
+    { loading },
+  ),
+  "image-resizer": dynamic(
+    () =>
+      import("@/features/tools/web-tools").then(
+        (module) => module.ImageResizer,
+      ),
+    { loading },
+  ),
+  "sort-lines": dynamic(
+    () => import("@/features/tools/text-developer-tools").then((m) => m.SortLines),
+    { loading },
+  ),
+  "find-replace": dynamic(
+    () => import("@/features/tools/text-developer-tools").then((m) => m.FindReplace),
+    { loading },
+  ),
+  "remove-line-breaks": dynamic(
+    () => import("@/features/tools/text-developer-tools").then((m) => m.RemoveLineBreaks),
+    { loading },
+  ),
+  "add-line-numbers": dynamic(
+    () => import("@/features/tools/text-developer-tools").then((m) => m.AddLineNumbers),
+    { loading },
+  ),
+  "strip-html": dynamic(
+    () => import("@/features/tools/text-developer-tools").then((m) => m.StripHtml),
+    { loading },
+  ),
+  "extract-emails": dynamic(
+    () => import("@/features/tools/text-developer-tools").then((m) => m.ExtractEmails),
+    { loading },
+  ),
+  "extract-urls": dynamic(
+    () => import("@/features/tools/text-developer-tools").then((m) => m.ExtractUrls),
+    { loading },
+  ),
+  "text-stats": dynamic(
+    () => import("@/features/tools/text-developer-tools").then((m) => m.TextStats),
+    { loading },
+  ),
+  "dice-roller": dynamic(
+    () => import("@/features/tools/social-utility-tools").then((m) => m.DiceRoller),
+    { loading },
+  ),
+  "rps-game": dynamic(
+    () => import("@/features/tools/social-utility-tools").then((m) => m.RpsGame),
+    { loading },
+  ),
+  timer: dynamic(
+    () => import("@/features/tools/social-utility-tools").then((m) => m.Timer),
+    { loading },
+  ),
+  "number-to-words": dynamic(
+    () => import("@/features/tools/social-utility-tools").then((m) => m.NumberToWords),
+    { loading },
+  ),
+  "rgb-to-hex": dynamic(
+    () => import("@/features/tools/measurement-tools").then((m) => m.RgbToHex),
+    { loading },
+  ),
+  "hsl-converter": dynamic(
+    () => import("@/features/tools/measurement-tools").then((m) => m.HslConverter),
+    { loading },
+  ),
+  "contrast-checker": dynamic(
+    () => import("@/features/tools/measurement-tools").then((m) => m.ContrastChecker),
+    { loading },
+  ),
+  "number-base-converter": dynamic(
+    () => import("@/features/tools/datetime-tools").then((m) => m.NumberBaseConverter),
+    { loading },
+  ),
+  "roman-numeral": dynamic(
+    () => import("@/features/tools/datetime-tools").then((m) => m.RomanNumeral),
+    { loading },
+  ),
+  "binary-converter": dynamic(
+    () => import("@/features/tools/datetime-tools").then((m) => m.BinaryConverter),
+    { loading },
+  ),
+  "basic-calculator": dynamic(
+    () => import("@/features/tools/calculator-tools").then((m) => m.BasicCalculator),
+    { loading },
+  ),
+  "image-compressor": dynamic(
+    () => import("@/features/tools/web-tools").then((m) => m.ImageCompressor),
+    { loading },
+  ),
 };
 
 export function ToolExperience({

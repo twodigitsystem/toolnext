@@ -36,6 +36,8 @@ export const converterTools: Tool[] = [
     href: "/tools/timestamp-converter",
     icon: Clock,
     featured: true,
+    popular: true,
+    implementation: "timestamp-converter",
     description: "Convert Unix timestamps to readable dates.",
   },
   {
@@ -44,6 +46,8 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/number-base-converter",
     icon: Binary,
+    popular: true,
+    implementation: "number-base-converter",
     description: "Convert between binary, octal, decimal and hex.",
   },
   {
@@ -52,6 +56,8 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/roman-numeral",
     icon: Numbers,
+    popular: true,
+    implementation: "roman-numeral",
     description: "Convert numbers to Roman numerals and back.",
   },
   {
@@ -60,6 +66,8 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/binary-converter",
     icon: Binary,
+    popular: true,
+    implementation: "binary-converter",
     description: "Convert text to binary and back.",
   },
   {

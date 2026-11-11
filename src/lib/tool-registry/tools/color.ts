@@ -38,6 +38,8 @@ export const colorTools: Tool[] = [
     category: "color",
     href: "/tools/rgb-to-hex",
     icon: PaintBucket,
+    popular: true,
+    implementation: "rgb-to-hex",
     description: "Convert RGB colors to HEX.",
   },
   {
@@ -46,6 +48,8 @@ export const colorTools: Tool[] = [
     category: "color",
     href: "/tools/hsl-converter",
     icon: Droplet,
+    popular: true,
+    implementation: "hsl-converter",
     description: "Convert colors between HSL, HEX and RGB.",
   },
   {
@@ -62,6 +66,8 @@ export const colorTools: Tool[] = [
     category: "color",
     href: "/tools/contrast-checker",
     icon: Contrast,
+    popular: true,
+    implementation: "contrast-checker",
     description: "Check WCAG contrast between two colors.",
   },
   {

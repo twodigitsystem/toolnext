@@ -3,3 +3,4 @@ allowBuilds:
   unrs-resolver: false
 minimumReleaseAgeExclude:
   - react-resizable-panels@4.19.1
+  - lucide-react@1.72.0
