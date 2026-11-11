@@ -159,6 +159,20 @@ const toolComponents: Record<ToolImplementation, ComponentType> = {
       ),
     { loading },
   ),
+  "caesar-cipher": dynamic(
+    () =>
+      import("@/features/tools/text-developer-tools").then(
+        (module) => module.CaesarCipher,
+      ),
+    { loading },
+  ),
+  rot13: dynamic(
+    () =>
+      import("@/features/tools/text-developer-tools").then(
+        (module) => module.Rot13,
+      ),
+    { loading },
+  ),
   "remove-duplicates": dynamic(
     () =>
       import("@/features/tools/text-developer-tools").then(
@@ -390,6 +404,63 @@ const toolComponents: Record<ToolImplementation, ComponentType> = {
   ),
   "binary-converter": dynamic(
     () => import("@/features/tools/datetime-tools").then((m) => m.BinaryConverter),
+    { loading },
+  ),
+  "length-converter": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then(
+        (m) => m.LengthConverter,
+      ),
+    { loading },
+  ),
+  "weight-converter": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then(
+        (m) => m.WeightConverter,
+      ),
+    { loading },
+  ),
+  "volume-converter": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then(
+        (m) => m.VolumeConverter,
+      ),
+    { loading },
+  ),
+  "area-converter": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then((m) => m.AreaConverter),
+    { loading },
+  ),
+  "speed-converter": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then((m) => m.SpeedConverter),
+    { loading },
+  ),
+  "data-storage": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then(
+        (m) => m.DataStorageConverter,
+      ),
+    { loading },
+  ),
+  "energy-converter": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then((m) => m.EnergyConverter),
+    { loading },
+  ),
+  "frequency-converter": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then(
+        (m) => m.FrequencyConverter,
+      ),
+    { loading },
+  ),
+  "css-unit-converter": dynamic(
+    () =>
+      import("@/features/tools/converter-tools").then(
+        (m) => m.CssUnitConverter,
+      ),
     { loading },
   ),
   "basic-calculator": dynamic(

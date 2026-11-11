@@ -8,6 +8,7 @@ import {
   Braces,
   CaseSensitive,
   Eraser,
+  Feather,
   Hash,
   Link2,
   ListFilter,
@@ -15,10 +16,12 @@ import {
   Mail,
   RotateCcw,
   TextCursorInput,
+  Wand2,
 } from "lucide-react";
 import { useState } from "react";
 import { ToolCard } from "@/components/landing-page/quick-tools/tool-card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -83,6 +86,18 @@ function splitGraphemes(text: string) {
     new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text),
     ({ segment }) => segment,
   );
+}
+
+function shiftLatinLetters(text: string, shift: number) {
+  const normalizedShift = ((shift % 26) + 26) % 26;
+  return Array.from(text, (character) => {
+    const code = character.charCodeAt(0);
+    const base =
+      code >= 65 && code <= 90 ? 65 : code >= 97 && code <= 122 ? 97 : null;
+    return base === null
+      ? character
+      : String.fromCharCode(base + ((code - base + normalizedShift) % 26));
+  }).join("");
 }
 
 export function CaseConverter() {
@@ -352,6 +367,124 @@ export function TextReverser() {
       </div>
     </ToolCard>
   );
+}
+
+type CipherOperation = "encode" | "decode";
+
+function CipherTool({ rot13 = false }: { rot13?: boolean }) {
+  const [text, setText] = useState("");
+  const [shift, setShift] = useState("3");
+  const [operation, setOperation] = useState<CipherOperation>("encode");
+  const Icon = rot13 ? Feather : Wand2;
+  const shiftAmount = rot13 ? 13 : Number(shift);
+  const validShift =
+    rot13 ||
+    (shift.trim() !== "" &&
+      Number.isInteger(shiftAmount) &&
+      shiftAmount >= 0 &&
+      shiftAmount <= 25);
+  const result =
+    text && validShift
+      ? shiftLatinLetters(
+          text,
+          operation === "encode" ? shiftAmount : -shiftAmount,
+        )
+      : "";
+
+  return (
+    <ToolCard
+      icon={Icon}
+      title={rot13 ? "ROT13" : "Caesar Cipher"}
+      badge="Text"
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          Only English letters A–Z are shifted. Spaces, punctuation, and other
+          characters are preserved. This classical cipher is not secure
+          encryption.
+        </p>
+      }
+    >
+      <label
+        htmlFor={rot13 ? "rot13-input" : "caesar-cipher-input"}
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        Text
+      </label>
+      <Textarea
+        id={rot13 ? "rot13-input" : "caesar-cipher-input"}
+        value={text}
+        onChange={(event) => setText(event.target.value)}
+        placeholder="Type or paste text here"
+        rows={4}
+        className="resize-y bg-surface-low"
+      />
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <label
+            htmlFor={rot13 ? "rot13-operation" : "caesar-operation"}
+            className="text-xs font-semibold text-on-surface-variant"
+          >
+            Operation
+          </label>
+          <select
+            id={rot13 ? "rot13-operation" : "caesar-operation"}
+            value={operation}
+            onChange={(event) => {
+              if (
+                event.target.value === "encode" ||
+                event.target.value === "decode"
+              ) {
+                setOperation(event.target.value);
+              }
+            }}
+            className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm text-on-surface"
+          >
+            <option value="encode">Encode</option>
+            <option value="decode">Decode</option>
+          </select>
+        </div>
+        {!rot13 && (
+          <div className="space-y-1.5">
+            <label
+              htmlFor="caesar-shift"
+              className="text-xs font-semibold text-on-surface-variant"
+            >
+              Shift (0–25)
+            </label>
+            <Input
+              id="caesar-shift"
+              type="number"
+              min="0"
+              max="25"
+              step="1"
+              value={shift}
+              onChange={(event) => setShift(event.target.value)}
+              className="bg-surface-low"
+            />
+          </div>
+        )}
+      </div>
+      {!validShift && (
+        <p role="alert" className="mt-2 text-xs text-destructive">
+          Enter a whole-number shift from 0 to 25.
+        </p>
+      )}
+      <div className="mt-3">
+        <ToolOutput
+          value={result}
+          label={`${operation === "encode" ? "Encoded" : "Decoded"} text`}
+        />
+      </div>
+    </ToolCard>
+  );
+}
+
+export function CaesarCipher() {
+  return <CipherTool />;
+}
+
+export function Rot13() {
+  return <CipherTool rot13 />;
 }
 
 export function RemoveDuplicateLines() {
@@ -634,17 +767,71 @@ export function UrlEncoder() {
  * ──────────────────────────────────────────────────────────────────────────── */
 
 const LOREM_WORDS = [
-  "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
-  "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore",
-  "magna", "aliqua", "enim", "ad", "minim", "veniam", "quis", "nostrud",
-  "exercitation", "ullamco", "laboris", "nisi", "aliquip", "ex", "ea", "commodo",
-  "consequat", "duis", "aute", "irure", "dolor", "reprehenderit", "voluptate",
-  "velit", "esse", "cillum", "fugiat", "nulla", "pariatur", "excepteur",
-  "sint", "occaecat", "cupidatat", "non", "proident", "sunt", "culpa",
-  "officia", "deserunt", "mollit", "anim", "id", "est", "laborum",
+  "lorem",
+  "ipsum",
+  "dolor",
+  "sit",
+  "amet",
+  "consectetur",
+  "adipiscing",
+  "elit",
+  "sed",
+  "do",
+  "eiusmod",
+  "tempor",
+  "incididunt",
+  "ut",
+  "labore",
+  "et",
+  "dolore",
+  "magna",
+  "aliqua",
+  "enim",
+  "ad",
+  "minim",
+  "veniam",
+  "quis",
+  "nostrud",
+  "exercitation",
+  "ullamco",
+  "laboris",
+  "nisi",
+  "aliquip",
+  "ex",
+  "ea",
+  "commodo",
+  "consequat",
+  "duis",
+  "aute",
+  "irure",
+  "dolor",
+  "reprehenderit",
+  "voluptate",
+  "velit",
+  "esse",
+  "cillum",
+  "fugiat",
+  "nulla",
+  "pariatur",
+  "excepteur",
+  "sint",
+  "occaecat",
+  "cupidatat",
+  "non",
+  "proident",
+  "sunt",
+  "culpa",
+  "officia",
+  "deserunt",
+  "mollit",
+  "anim",
+  "id",
+  "est",
+  "laborum",
 ];
 
-const LOREM_SENTENCE = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+const LOREM_SENTENCE =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
 function generateLoremWords(count: number): string {
   const result: string[] = [];
@@ -672,7 +859,9 @@ function generateLoremParagraphs(count: number): string {
 }
 
 export function LoremIpsum() {
-  const [mode, setMode] = useState<"paragraphs" | "sentences" | "words">("paragraphs");
+  const [mode, setMode] = useState<"paragraphs" | "sentences" | "words">(
+    "paragraphs",
+  );
   const [count, setCount] = useState("3");
   const [result, setResult] = useState("");
 
@@ -697,20 +886,28 @@ export function LoremIpsum() {
       badge="Text"
       footer={
         <p className="text-xs text-on-surface-variant">
-          Classic placeholder text generated locally. Random variation each time.
+          Classic placeholder text generated locally. Random variation each
+          time.
         </p>
       }
     >
       <div className="flex gap-3">
         <div className="flex-1 space-y-1.5">
-          <label htmlFor="lorem-mode" className="text-xs font-semibold text-on-surface-variant">
+          <label
+            htmlFor="lorem-mode"
+            className="text-xs font-semibold text-on-surface-variant"
+          >
             Type
           </label>
           <select
             id="lorem-mode"
             value={mode}
             onChange={(e) => {
-              if (e.target.value === "paragraphs" || e.target.value === "sentences" || e.target.value === "words")
+              if (
+                e.target.value === "paragraphs" ||
+                e.target.value === "sentences" ||
+                e.target.value === "words"
+              )
                 setMode(e.target.value);
             }}
             className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm text-on-surface"
@@ -721,7 +918,10 @@ export function LoremIpsum() {
           </select>
         </div>
         <div className="w-24 space-y-1.5">
-          <label htmlFor="lorem-count" className="text-xs font-semibold text-on-surface-variant">
+          <label
+            htmlFor="lorem-count"
+            className="text-xs font-semibold text-on-surface-variant"
+          >
             Count
           </label>
           <input
@@ -752,7 +952,9 @@ export function LoremIpsum() {
 
 export function SortLines() {
   const [text, setText] = useState("");
-  const [mode, setMode] = useState<"alpha" | "alpha-reverse" | "numeric" | "random">("alpha");
+  const [mode, setMode] = useState<
+    "alpha" | "alpha-reverse" | "numeric" | "random"
+  >("alpha");
 
   const result = (() => {
     if (!text) return "";
@@ -783,17 +985,46 @@ export function SortLines() {
       icon={ArrowDownWideNarrow}
       title="Sort Lines"
       badge="Text"
-      footer={<p className="text-xs text-on-surface-variant">Sorts lines locally without sending data anywhere.</p>}
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          Sorts lines locally without sending data anywhere.
+        </p>
+      }
     >
-      <label htmlFor="sort-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">Lines to sort</label>
-      <Textarea id="sort-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="banana\napple\ncherry" rows={5} className="resize-y bg-surface-low font-mono text-xs" />
-      <select value={mode} onChange={(e) => { if (["alpha", "alpha-reverse", "numeric", "random"].includes(e.target.value)) setMode(e.target.value as typeof mode); }} className="mt-3 h-9 w-full rounded-lg border border-input bg-card px-3 text-sm text-on-surface">
+      <label
+        htmlFor="sort-input"
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        Lines to sort
+      </label>
+      <Textarea
+        id="sort-input"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="banana\napple\ncherry"
+        rows={5}
+        className="resize-y bg-surface-low font-mono text-xs"
+      />
+      <select
+        value={mode}
+        onChange={(e) => {
+          if (
+            ["alpha", "alpha-reverse", "numeric", "random"].includes(
+              e.target.value,
+            )
+          )
+            setMode(e.target.value as typeof mode);
+        }}
+        className="mt-3 h-9 w-full rounded-lg border border-input bg-card px-3 text-sm text-on-surface"
+      >
         <option value="alpha">Alphabetical A–Z</option>
         <option value="alpha-reverse">Alphabetical Z–A</option>
         <option value="numeric">Numeric</option>
         <option value="random">Randomize</option>
       </select>
-      <div className="mt-3"><ToolOutput value={result} label="Sorted output" rows={5} /></div>
+      <div className="mt-3">
+        <ToolOutput value={result} label="Sorted output" rows={5} />
+      </div>
     </ToolCard>
   );
 }
@@ -839,26 +1070,71 @@ export function FindReplace() {
       icon={RotateCcw}
       title="Find & Replace"
       badge="Text"
-      footer={<p className="text-xs text-on-surface-variant">{count} occurrence{count === 1 ? "" : "s"} found.</p>}
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          {count} occurrence{count === 1 ? "" : "s"} found.
+        </p>
+      }
     >
-      <label htmlFor="fr-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">Text</label>
-      <Textarea id="fr-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Enter text to search in…" rows={4} className="resize-y bg-surface-low font-mono text-xs" />
+      <label
+        htmlFor="fr-input"
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        Text
+      </label>
+      <Textarea
+        id="fr-input"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Enter text to search in…"
+        rows={4}
+        className="resize-y bg-surface-low font-mono text-xs"
+      />
       <div className="mt-3 grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <label htmlFor="fr-find" className="text-xs font-semibold text-on-surface-variant">Find</label>
-          <input id="fr-find" value={find} onChange={(e) => setFind(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+          <label
+            htmlFor="fr-find"
+            className="text-xs font-semibold text-on-surface-variant"
+          >
+            Find
+          </label>
+          <input
+            id="fr-find"
+            value={find}
+            onChange={(e) => setFind(e.target.value)}
+            className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface"
+          />
         </div>
         <div className="space-y-1.5">
-          <label htmlFor="fr-replace" className="text-xs font-semibold text-on-surface-variant">Replace with</label>
-          <input id="fr-replace" value={replacement} onChange={(e) => setReplacement(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+          <label
+            htmlFor="fr-replace"
+            className="text-xs font-semibold text-on-surface-variant"
+          >
+            Replace with
+          </label>
+          <input
+            id="fr-replace"
+            value={replacement}
+            onChange={(e) => setReplacement(e.target.value)}
+            className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface"
+          />
         </div>
       </div>
       <label className="mt-2 flex items-center gap-2 text-xs text-on-surface-variant cursor-pointer">
-        <input type="checkbox" checked={useRegex} onChange={(e) => setUseRegex(e.target.checked)} className="size-3.5 accent-primary" />
+        <input
+          type="checkbox"
+          checked={useRegex}
+          onChange={(e) => setUseRegex(e.target.checked)}
+          className="size-3.5 accent-primary"
+        />
         Use regular expression
       </label>
-      {useRegex && find && !result && <p className="mt-1 text-xs text-destructive">Invalid regex pattern.</p>}
-      <div className="mt-3"><ToolOutput value={result} label="Result" rows={4} /></div>
+      {useRegex && find && !result && (
+        <p className="mt-1 text-xs text-destructive">Invalid regex pattern.</p>
+      )}
+      <div className="mt-3">
+        <ToolOutput value={result} label="Result" rows={4} />
+      </div>
     </ToolCard>
   );
 }
@@ -878,13 +1154,43 @@ export function RemoveLineBreaks() {
       icon={Eraser}
       title="Remove Line Breaks"
       badge="Text"
-      footer={<p className="text-xs text-on-surface-variant">{text ? `${result.length} characters in 1 line` : "Paste text with line breaks."}</p>}
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          {text
+            ? `${result.length} characters in 1 line`
+            : "Paste text with line breaks."}
+        </p>
+      }
     >
-      <label htmlFor="rlb-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">Text with line breaks</label>
-      <Textarea id="rlb-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Hello&#10;World" rows={5} className="resize-y bg-surface-low font-mono text-xs" />
-      <label htmlFor="rlb-join" className="mb-1.5 mt-3 block text-xs font-semibold text-on-surface-variant">Join lines with</label>
-      <input id="rlb-join" value={joinWith} onChange={(e) => setJoinWith(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
-      <div className="mt-3"><ToolOutput value={result} label="Joined text" rows={4} /></div>
+      <label
+        htmlFor="rlb-input"
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        Text with line breaks
+      </label>
+      <Textarea
+        id="rlb-input"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Hello&#10;World"
+        rows={5}
+        className="resize-y bg-surface-low font-mono text-xs"
+      />
+      <label
+        htmlFor="rlb-join"
+        className="mb-1.5 mt-3 block text-xs font-semibold text-on-surface-variant"
+      >
+        Join lines with
+      </label>
+      <input
+        id="rlb-join"
+        value={joinWith}
+        onChange={(e) => setJoinWith(e.target.value)}
+        className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface"
+      />
+      <div className="mt-3">
+        <ToolOutput value={result} label="Joined text" rows={4} />
+      </div>
     </ToolCard>
   );
 }
@@ -910,21 +1216,61 @@ export function AddLineNumbers() {
       icon={ListOrdered}
       title="Add Line Numbers"
       badge="Text"
-      footer={<p className="text-xs text-on-surface-variant">{lineCount} lines numbered.</p>}
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          {lineCount} lines numbered.
+        </p>
+      }
     >
-      <label htmlFor="aln-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">Text</label>
-      <Textarea id="aln-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Line one&#10;Line two" rows={5} className="resize-y bg-surface-low font-mono text-xs" />
+      <label
+        htmlFor="aln-input"
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        Text
+      </label>
+      <Textarea
+        id="aln-input"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Line one&#10;Line two"
+        rows={5}
+        className="resize-y bg-surface-low font-mono text-xs"
+      />
       <div className="mt-3 grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <label htmlFor="aln-start" className="text-xs font-semibold text-on-surface-variant">Start at</label>
-          <input id="aln-start" type="number" min="0" value={start} onChange={(e) => setStart(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+          <label
+            htmlFor="aln-start"
+            className="text-xs font-semibold text-on-surface-variant"
+          >
+            Start at
+          </label>
+          <input
+            id="aln-start"
+            type="number"
+            min="0"
+            value={start}
+            onChange={(e) => setStart(e.target.value)}
+            className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface"
+          />
         </div>
         <div className="space-y-1.5">
-          <label htmlFor="aln-sep" className="text-xs font-semibold text-on-surface-variant">Separator</label>
-          <input id="aln-sep" value={separator} onChange={(e) => setSeparator(e.target.value)} className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface" />
+          <label
+            htmlFor="aln-sep"
+            className="text-xs font-semibold text-on-surface-variant"
+          >
+            Separator
+          </label>
+          <input
+            id="aln-sep"
+            value={separator}
+            onChange={(e) => setSeparator(e.target.value)}
+            className="h-9 w-full rounded-lg border border-input bg-surface-low px-3 text-sm text-on-surface"
+          />
         </div>
       </div>
-      <div className="mt-3"><ToolOutput value={result} label="Numbered output" rows={5} /></div>
+      <div className="mt-3">
+        <ToolOutput value={result} label="Numbered output" rows={5} />
+      </div>
     </ToolCard>
   );
 }
@@ -943,11 +1289,31 @@ export function StripHtml() {
       icon={AlignLeft}
       title="Strip HTML"
       badge="Text"
-      footer={<p className="text-xs text-on-surface-variant">{html ? `${html.length - result.length} characters of HTML tags removed.` : "Paste HTML to strip tags."}</p>}
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          {html
+            ? `${html.length - result.length} characters of HTML tags removed.`
+            : "Paste HTML to strip tags."}
+        </p>
+      }
     >
-      <label htmlFor="strip-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">HTML source</label>
-      <Textarea id="strip-input" value={html} onChange={(e) => setHtml(e.target.value)} placeholder="<p>Hello <b>world</b></p>" rows={6} className="resize-y bg-surface-low font-mono text-xs" />
-      <div className="mt-3"><ToolOutput value={result} label="Plain text" rows={5} /></div>
+      <label
+        htmlFor="strip-input"
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        HTML source
+      </label>
+      <Textarea
+        id="strip-input"
+        value={html}
+        onChange={(e) => setHtml(e.target.value)}
+        placeholder="<p>Hello <b>world</b></p>"
+        rows={6}
+        className="resize-y bg-surface-low font-mono text-xs"
+      />
+      <div className="mt-3">
+        <ToolOutput value={result} label="Plain text" rows={5} />
+      </div>
     </ToolCard>
   );
 }
@@ -972,11 +1338,30 @@ export function ExtractEmails() {
       icon={Mail}
       title="Extract Emails"
       badge="Text"
-      footer={<p className="text-xs text-on-surface-variant">{emails.length} unique email address{emails.length === 1 ? "" : "es"} found.</p>}
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          {emails.length} unique email address{emails.length === 1 ? "" : "es"}{" "}
+          found.
+        </p>
+      }
     >
-      <label htmlFor="emails-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">Source text</label>
-      <Textarea id="emails-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Contact us at hello@example.com or support@test.org" rows={5} className="resize-y bg-surface-low font-mono text-xs" />
-      <div className="mt-3"><ToolOutput value={result} label="Extracted emails" rows={5} /></div>
+      <label
+        htmlFor="emails-input"
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        Source text
+      </label>
+      <Textarea
+        id="emails-input"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Contact us at hello@example.com or support@test.org"
+        rows={5}
+        className="resize-y bg-surface-low font-mono text-xs"
+      />
+      <div className="mt-3">
+        <ToolOutput value={result} label="Extracted emails" rows={5} />
+      </div>
     </ToolCard>
   );
 }
@@ -1001,11 +1386,29 @@ export function ExtractUrls() {
       icon={Link2}
       title="Extract URLs"
       badge="Text"
-      footer={<p className="text-xs text-on-surface-variant">{urls.length} unique URL{urls.length === 1 ? "" : "s"} found.</p>}
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          {urls.length} unique URL{urls.length === 1 ? "" : "s"} found.
+        </p>
+      }
     >
-      <label htmlFor="urls-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">Source text</label>
-      <Textarea id="urls-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Visit https://example.com and https://test.org for info" rows={5} className="resize-y bg-surface-low font-mono text-xs" />
-      <div className="mt-3"><ToolOutput value={result} label="Extracted URLs" rows={5} /></div>
+      <label
+        htmlFor="urls-input"
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        Source text
+      </label>
+      <Textarea
+        id="urls-input"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Visit https://example.com and https://test.org for info"
+        rows={5}
+        className="resize-y bg-surface-low font-mono text-xs"
+      />
+      <div className="mt-3">
+        <ToolOutput value={result} label="Extracted URLs" rows={5} />
+      </div>
     </ToolCard>
   );
 }
@@ -1016,7 +1419,10 @@ export function ExtractUrls() {
 
 function splitGraphemesStat(text: string) {
   if (typeof Intl.Segmenter === "undefined") return Array.from(text);
-  return Array.from(new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text), ({ segment }) => segment);
+  return Array.from(
+    new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text),
+    ({ segment }) => segment,
+  );
 }
 
 export function TextStats() {
@@ -1030,9 +1436,10 @@ export function TextStats() {
   const paragraphs = text ? text.split(/\n\s*\n/).filter(Boolean) : [];
 
   // Avg word length
-  const avgWordLength = words.length > 0
-    ? (words.reduce((sum, w) => sum + w.length, 0) / words.length).toFixed(1)
-    : "0";
+  const avgWordLength =
+    words.length > 0
+      ? (words.reduce((sum, w) => sum + w.length, 0) / words.length).toFixed(1)
+      : "0";
 
   // Unique words
   const uniqueWords = new Set(words.map((w) => w.toLowerCase())).size;
@@ -1046,10 +1453,26 @@ export function TextStats() {
       icon={BarChart3}
       title="Text Statistics"
       badge="Text"
-      footer={<p className="text-xs text-on-surface-variant">{readingTime} min read · {speakingTime} min speak</p>}
+      footer={
+        <p className="text-xs text-on-surface-variant">
+          {readingTime} min read · {speakingTime} min speak
+        </p>
+      }
     >
-      <label htmlFor="stats-input" className="mb-1.5 text-xs font-semibold text-on-surface-variant">Text to analyze</label>
-      <Textarea id="stats-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Paste text to analyze…" rows={5} className="resize-y bg-surface-low font-mono text-xs" />
+      <label
+        htmlFor="stats-input"
+        className="mb-1.5 text-xs font-semibold text-on-surface-variant"
+      >
+        Text to analyze
+      </label>
+      <Textarea
+        id="stats-input"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Paste text to analyze…"
+        rows={5}
+        className="resize-y bg-surface-low font-mono text-xs"
+      />
       {text && (
         <div className="mt-3 grid grid-cols-3 gap-2">
           {[
@@ -1062,8 +1485,13 @@ export function TextStats() {
             ["Avg word len", avgWordLength],
             ["Unique words", uniqueWords],
           ].map(([label, count]) => (
-            <div key={label} className="rounded-xl bg-primary/5 p-2.5 text-center">
-              <p className="font-heading text-lg font-bold text-primary">{count?.toLocaleString()}</p>
+            <div
+              key={label}
+              className="rounded-xl bg-primary/5 p-2.5 text-center"
+            >
+              <p className="font-heading text-lg font-bold text-primary">
+                {count?.toLocaleString()}
+              </p>
               <p className="text-[10px] text-on-surface-variant">{label}</p>
             </div>
           ))}

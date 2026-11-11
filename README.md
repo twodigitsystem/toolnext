@@ -13,7 +13,7 @@ Utility Heaven is the working name for **ToolNext**, an all-in-one utility platf
   - Percentage calculator
   - Unit converter
   - Color picker
-- 25 additional browser-only tools across text, developer, conversion, calculation, date/time, image, color, generator, SEO, network, security, media, social, and utility categories
+- Browser-only tools across text, developer, conversion, calculation, date/time, image, color, generator, SEO, network, security, media, social, and utility categories, including length, weight, volume, area, speed, data storage, energy, frequency, and CSS unit converters
 - Tool inputs are processed locally; only the four homepage quick tools currently persist selected inputs in browser storage
 - Light/dark theme support via `next-themes`
 - Recent directory searches are stored locally in the browser

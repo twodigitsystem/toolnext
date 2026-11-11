@@ -155,6 +155,7 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/caesar-cipher",
     icon: Wand2,
+    implementation: "caesar-cipher",
     description: "Encrypt or decrypt text with shift cipher.",
   },
   {
@@ -163,6 +164,7 @@ export const textTools: Tool[] = [
     category: "text",
     href: "/tools/rot13",
     icon: Feather,
+    implementation: "rot13",
     description: "Apply ROT13 cipher to any text.",
   },
   {

@@ -8,7 +8,6 @@ import {
   HardDrive,
   Numbers,
   Palette,
-  Repeat,
   Ruler,
   Square,
   Thermometer,
@@ -85,6 +84,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/length-converter",
     icon: Ruler,
+    implementation: "length-converter",
     description: "Convert meters, feet, inches, miles and more.",
   },
   {
@@ -93,6 +93,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/weight-converter",
     icon: Weight,
+    implementation: "weight-converter",
     description: "Convert kg, lbs, oz, g, tons and more.",
   },
   {
@@ -101,6 +102,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/volume-converter",
     icon: FlaskConical,
+    implementation: "volume-converter",
     description: "Convert liters, gallons, cups, ml, pints.",
   },
   {
@@ -109,6 +111,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/area-converter",
     icon: Square,
+    implementation: "area-converter",
     description: "Convert sq meters, sq feet, acres, hectares.",
   },
   {
@@ -117,6 +120,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/speed-converter",
     icon: Gauge,
+    implementation: "speed-converter",
     description: "Convert km/h, mph, m/s and knots.",
   },
   {
@@ -125,6 +129,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/data-storage",
     icon: HardDrive,
+    implementation: "data-storage",
     description: "Convert bytes, KB, MB, GB, TB.",
   },
   {
@@ -142,6 +147,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/energy-converter",
     icon: Zap,
+    implementation: "energy-converter",
     description: "Convert joules, calories, kWh and more.",
   },
   {
@@ -150,6 +156,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/frequency-converter",
     icon: Waves,
+    implementation: "frequency-converter",
     description: "Convert Hz, kHz, MHz, GHz.",
   },
   {
@@ -158,6 +165,7 @@ export const converterTools: Tool[] = [
     category: "converter",
     href: "/tools/css-unit-converter",
     icon: Palette,
+    implementation: "css-unit-converter",
     description: "Convert px, em, rem, vh, vw and percentages.",
   },
 ];
