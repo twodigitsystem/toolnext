@@ -50,9 +50,12 @@ export function InstallPwaButton() {
 
   const install = async () => {
     if (!installPrompt) {
-      const message = /iphone|ipad|ipod/i.test(navigator.userAgent)
+      const userAgent = navigator.userAgent;
+      const message = /iphone|ipad|ipod/i.test(userAgent)
         ? "In Safari, tap Share, then Add to Home Screen."
-        : "Choose Install app or Add to Home screen from your browser menu.";
+        : /electron/i.test(userAgent)
+          ? "The VS Code browser cannot install PWAs. Open ToolNext in Chrome or Edge and choose Install app from the browser menu."
+          : "Choose Install app or Add to Home screen from your browser menu.";
       toast.info(message);
       return;
     }
